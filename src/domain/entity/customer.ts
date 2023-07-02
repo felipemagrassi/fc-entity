@@ -21,6 +21,10 @@ export default class Customer {
     return this._id;
   }
 
+  get Address(): Address {
+    return this._address;
+  }
+
   validate() {
     if (this._name.length === 0) {
       throw new Error("Name is required");
