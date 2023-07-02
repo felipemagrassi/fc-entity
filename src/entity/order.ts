@@ -26,9 +26,16 @@ export default class Order {
     if (this._items.length === 0) {
       throw new Error("Items are required");
     }
+
+    if (this._items.some((item) => item.quantity <= 0)) {
+      throw new Error("Item quantity cannot be zero or less");
+    }
   }
 
   total() {
-    return this._items.reduce((total, item) => total + item._price, 0);
+    return this._items.reduce(
+      (total, item) => total + item.orderItemTotal(),
+      0
+    );
   }
 }
