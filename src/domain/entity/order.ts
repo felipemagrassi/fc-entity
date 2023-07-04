@@ -2,16 +2,28 @@ import OrderItem from "./order_item";
 
 export default class Order {
   private _id: string;
-  private _customerId: string;
+  private _customer_id: string;
   private _items: OrderItem[] = [];
   private _total: number;
 
-  constructor(id: string, customerId: string, items: OrderItem[]) {
+  constructor(id: string, customer_id: string, items: OrderItem[]) {
     this._id = id;
-    this._customerId = customerId;
+    this._customer_id = customer_id;
     this._items = items;
     this._total = this.total();
     this.validate();
+  }
+
+  get id(): string {
+    return this._id;
+  }
+
+  get customer_id(): string {
+    return this._customer_id;
+  }
+
+  get items(): OrderItem[] {
+    return this._items;
   }
 
   validate() {
@@ -19,7 +31,7 @@ export default class Order {
       throw new Error("ID is required");
     }
 
-    if (this._customerId.length === 0) {
+    if (this._customer_id.length === 0) {
       throw new Error("Customer ID is required");
     }
 
