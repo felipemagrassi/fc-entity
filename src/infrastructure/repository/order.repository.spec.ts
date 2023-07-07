@@ -187,10 +187,10 @@ describe("OrderRepository", () => {
     );
 
     const orderRepository = new OrderRepository();
-    const order = new Order("1", "1", [orderItem]);
+    const order = new Order("2", "1", [orderItem]);
     await orderRepository.create(order);
 
-    expect(await orderRepository.find("1")).toStrictEqual(order);
+    expect(await orderRepository.find("2")).toStrictEqual(order);
   });
 
   it("should throw an error when customer is not found", async () => {
