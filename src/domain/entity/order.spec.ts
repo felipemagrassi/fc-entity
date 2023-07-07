@@ -31,6 +31,53 @@ describe("Orders unit tests", () => {
     expect(total).toBe(300);
   });
 
+
+  it("should remove item from order", () => {
+    const item = new OrderItem("1", "1", 100, 3, "1");
+    const item2 = new OrderItem("2", "1", 200, 2, "2");
+    const order = new Order("1", "1", [item, item2]);
+
+    order.removeItem(item);
+
+    expect(order.items.length).toBe(1)
+  });
+
+  it("should throw an error when item doesnt exist in order", () => {
+    const item = new OrderItem("1", "1", 100, 3, "1");
+    const item2 = new OrderItem("2", "1", 200, 2, "2");
+    const order = new Order("1", "1", [item]);
+
+    expect(() => order.removeItem(item2)).toThrowError(
+      "Item does not exist in order"
+    );
+  });
+
+  it("should add item to order", () => {
+    const item = new OrderItem("1", "1", 100, 3, "1");
+    const item2 = new OrderItem("2", "1", 200, 2, "2");
+
+    const order = new Order("1", "1", [item]);
+    expect(order.items.length).toBe(1)
+
+    order.addItem(item2)
+    expect(order.items.length).toBe(2)
+  });
+
+  it("shouldnt add the same item to order", () => {
+    const item = new OrderItem("1", "1", 100, 3, "1");
+    const item2 = new OrderItem("2", "1", 200, 2, "2");
+
+    const order = new Order("1", "1", [item]);
+    expect(order.items.length).toBe(1)
+
+    order.addItem(item2)
+    expect(order.items.length).toBe(2)
+
+    expect(() => order.addItem(item2)).toThrowError(
+      "Item already exists in order"
+    );
+  });
+
   it("should throw an error when item quantity is zero or less", () => {
     const item = new OrderItem("1", "1", 100, 0, "1");
     expect(() => new Order("1", "1", [item])).toThrowError(

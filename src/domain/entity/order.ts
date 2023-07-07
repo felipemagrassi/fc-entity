@@ -44,6 +44,27 @@ export default class Order {
     }
   }
 
+  addItem(orderItem: OrderItem) {
+    if (this._items.some((item) => item.id === orderItem.id)) {
+      throw new Error("Item already exists in order");
+    }
+    if (this._items.some((item) => item.productId === orderItem.productId)) {
+      throw new Error("Product already exists in order");
+    }
+
+    this._items.push(orderItem);
+    this.validate();
+  }
+
+  removeItem(orderItem: OrderItem) {
+    if (!this._items.some((item) => item.id === orderItem.id)) {
+      throw new Error("Item does not exist in order");
+    }
+
+    this._items = this._items.filter((item) => item.id !== orderItem.id);
+    this.validate();
+  }
+
   total() {
     return this._items.reduce(
       (total, item) => total + item.orderItemTotal(),
