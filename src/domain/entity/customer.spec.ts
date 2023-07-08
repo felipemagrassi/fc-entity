@@ -1,7 +1,46 @@
 import Customer from "./customer";
 import Address from "./address";
 
+import AddNewCustomerToThirdPartyApiHandler from "../event/customer/handler/add-new-customer-to-third-party-api.handler";
+import SendEmailWhenCustomerIsCreatedHandler from "../event/customer/handler/send-email-when-customer-is-created.handler";
+import AddNewAddressToStoreHandler from "../event/customer/handler/add-new-address-to-store.handler";
+
+
 describe("Customer unit tests", () => {
+  it("should send email when creating a customer", () => {
+    const spy = jest.spyOn(SendEmailWhenCustomerIsCreatedHandler.prototype, "handle");
+    const customer = new Customer("1", "John");
+    const address = new Address("Rua 1", 123, "12345-123", "São Paulo");
+
+    customer.setAddress(address);
+    customer.create();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should add new customer to third party api when creating a customer", () => {
+    const spy = jest.spyOn(AddNewCustomerToThirdPartyApiHandler.prototype, "handle");
+
+    const customer = new Customer("1", "John");
+    const address = new Address("Rua 1", 123, "12345-123", "São Paulo");
+
+    customer.setAddress(address);
+    customer.create();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should be able to change addresses", () => {
+    const spy = jest.spyOn(AddNewAddressToStoreHandler.prototype, "handle");
+
+    const customer = new Customer("1", "John");
+    const address = new Address("Rua 1", 123, "12345-123", "São Paulo");
+    customer.setAddress(address);
+
+    expect(customer.Address).toEqual(address);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
   it("should throw an error when name is empty", () => {
     expect(() => new Customer("1", "")).toThrowError("Name is required");
   });

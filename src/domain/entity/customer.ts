@@ -1,3 +1,10 @@
+import EventDispatcher from "../event/@shared/event-dispatcher";
+import EventInterface from "../event/@shared/event.interface";
+import CustomerAddressChangedEvent from "../event/customer/customer-address-changed.event";
+import CustomerCreatedEvent from "../event/customer/customer-created.event";
+import AddNewAddressToStoreHandler from "../event/customer/handler/add-new-address-to-store.handler";
+import AddNewCustomerToThirdPartyApiHandler from "../event/customer/handler/add-new-customer-to-third-party-api.handler";
+import SendEmailWhenCustomerIsCreatedHandler from "../event/customer/handler/send-email-when-customer-is-created.handler";
 import Address from "./address";
 
 export default class Customer {
@@ -6,6 +13,7 @@ export default class Customer {
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
+  private _eventDispatcher: EventDispatcher = new EventDispatcher();
 
   constructor(id: string, name: string) {
     this._id = id;
@@ -23,6 +31,10 @@ export default class Customer {
 
   get Address(): Address {
     return this._address;
+  }
+
+  get rewardPoints(): number {
+    return this._rewardPoints;
   }
 
   validate() {
@@ -46,12 +58,26 @@ export default class Customer {
     this._active = true;
   }
 
-  deactivate() {
-    this._active = false;
+  create() {
+    const event = new CustomerCreatedEvent(this);
+    const eventHandlers = [
+      new AddNewCustomerToThirdPartyApiHandler(),
+      new SendEmailWhenCustomerIsCreatedHandler(),
+    ];
+
+    eventHandlers.forEach((handler) => {
+      this._eventDispatcher.register("CustomerCreatedEvent", handler);
+    });
+
+    this.apply(event);
   }
 
-  get rewardPoints(): number {
-    return this._rewardPoints;
+  private apply(event: EventInterface) {
+    this._eventDispatcher.notify(event);
+  }
+
+  deactivate() {
+    this._active = false;
   }
 
   addRewardPoints(points: number) {
@@ -59,7 +85,14 @@ export default class Customer {
   }
 
   setAddress(address: Address) {
+    const eventHandler = new AddNewAddressToStoreHandler();
+
+    this._eventDispatcher.register("CustomerAddressChangedEvent", eventHandler);
     this._address = address;
+
+    const event = new CustomerAddressChangedEvent({customer: this, address: this.Address})
+
+    this.apply(event);
   }
 
   isActive(): boolean {
