@@ -1,11 +1,10 @@
-import OrderRepositoryInterface from "../../domain/checkout/repository/order-repository.interface";
-import Order from "../../domain/checkout/entity/order";
-import OrderItem from "../../domain/checkout/entity/order_item";
-import OrderItemModel from "../db/sequelize/order-item.model";
-import OrderModel from "../db/sequelize/order.model";
+import Order from "../../../../domain/checkout/entity/order";
+import OrderItem from "../../../../domain/checkout/entity/order_item";
+import OrderRepositoryInterface from "../../../../domain/checkout/repository/order-repository.interface";
+import OrderItemModel from "./order-item.model";
+import OrderModel from "./order.model";
 
-
-export default class OrderRepository implements OrderRepositoryInterface{
+export default class OrderRepository implements OrderRepositoryInterface {
   async create(entity: Order): Promise<void> {
     await OrderModel.create(
       {
@@ -27,11 +26,17 @@ export default class OrderRepository implements OrderRepositoryInterface{
   }
 
   async update(entity: Order): Promise<void> {
-    const allOrderItems = await OrderItemModel.findAll({ where: { order_id: entity.id } })
-    const deletedItems = allOrderItems.filter(item => !entity.items.find(entityItem => entityItem.id === item.id))
+    const allOrderItems = await OrderItemModel.findAll({
+      where: { order_id: entity.id },
+    });
+    const deletedItems = allOrderItems.filter(
+      (item) => !entity.items.find((entityItem) => entityItem.id === item.id)
+    );
 
     try {
-      await OrderItemModel.destroy({ where: { id: deletedItems.map((item) => item.id) } })
+      await OrderItemModel.destroy({
+        where: { id: deletedItems.map((item) => item.id) },
+      });
 
       entity.items.forEach(async (item) => {
         await OrderItemModel.upsert({
@@ -41,8 +46,8 @@ export default class OrderRepository implements OrderRepositoryInterface{
           product_id: item.productId,
           quantity: item.quantity,
           order_id: entity.id,
-        })
-      })
+        });
+      });
 
       await OrderModel.update(
         {
@@ -51,26 +56,37 @@ export default class OrderRepository implements OrderRepositoryInterface{
           total: entity.total(),
         },
         { where: { id: entity.id } }
-      )
+      );
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   async find(id: string): Promise<Order> {
     try {
-      const orderModel = await OrderModel.findOne({ where: { id: id }, include: [OrderItemModel] });
+      const orderModel = await OrderModel.findOne({
+        where: { id: id },
+        include: [OrderItemModel],
+      });
 
       const order = new Order(
         orderModel.id,
         orderModel.customer_id,
-        orderModel.items.map((item) => new OrderItem(item.id, item.name, item.price, item.quantity, item.product_id))
-      )
+        orderModel.items.map(
+          (item) =>
+            new OrderItem(
+              item.id,
+              item.name,
+              item.price,
+              item.quantity,
+              item.product_id
+            )
+        )
+      );
 
-      return order
-
+      return order;
     } catch (error) {
-      throw new Error("Order not found")
+      throw new Error("Order not found");
     }
   }
 
@@ -81,13 +97,20 @@ export default class OrderRepository implements OrderRepositoryInterface{
       const order = new Order(
         orderModel.id,
         orderModel.customer_id,
-        orderModel.items.map((item) => new OrderItem(item.id, item.name, item.price, item.quantity, item.product_id))
+        orderModel.items.map(
+          (item) =>
+            new OrderItem(
+              item.id,
+              item.name,
+              item.price,
+              item.quantity,
+              item.product_id
+            )
+        )
       );
       return order;
     });
 
     return orders;
   }
-
-
 }
