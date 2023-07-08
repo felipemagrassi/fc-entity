@@ -1,11 +1,11 @@
-import EventDispatcher from "../event/@shared/event-dispatcher";
-import EventInterface from "../event/@shared/event.interface";
-import CustomerAddressChangedEvent from "../event/customer/customer-address-changed.event";
-import CustomerCreatedEvent from "../event/customer/customer-created.event";
-import AddNewAddressToStoreHandler from "../event/customer/handler/add-new-address-to-store.handler";
-import AddNewCustomerToThirdPartyApiHandler from "../event/customer/handler/add-new-customer-to-third-party-api.handler";
-import SendEmailWhenCustomerIsCreatedHandler from "../event/customer/handler/send-email-when-customer-is-created.handler";
-import Address from "./address";
+import EventDispatcher from "../../@shared/event/event-dispatcher";
+import EventInterface from "../../@shared/event/event.interface";
+import CustomerAddressChangedEvent from "../event/customer-address-changed.event";
+import CustomerCreatedEvent from "../event/customer-created.event";
+import AddNewAddressToStoreHandler from "../event/handler/add-new-address-to-store.handler";
+import AddNewCustomerToThirdPartyApiHandler from "../event/handler/add-new-customer-to-third-party-api.handler";
+import SendEmailWhenCustomerIsCreatedHandler from "../event/handler/send-email-when-customer-is-created.handler";
+import Address from "../value-object/address";
 
 export default class Customer {
   private _id: string;

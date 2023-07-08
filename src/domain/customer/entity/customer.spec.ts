@@ -1,10 +1,8 @@
 import Customer from "./customer";
-import Address from "./address";
-
-import AddNewCustomerToThirdPartyApiHandler from "../event/customer/handler/add-new-customer-to-third-party-api.handler";
-import SendEmailWhenCustomerIsCreatedHandler from "../event/customer/handler/send-email-when-customer-is-created.handler";
-import AddNewAddressToStoreHandler from "../event/customer/handler/add-new-address-to-store.handler";
-
+import Address from "../value-object/address";
+import SendEmailWhenCustomerIsCreatedHandler from "../event/handler/send-email-when-customer-is-created.handler";
+import AddNewAddressToStoreHandler from "../event/handler/add-new-address-to-store.handler";
+import AddNewCustomerToThirdPartyApiHandler from "../event/handler/add-new-customer-to-third-party-api.handler";
 
 describe("Customer unit tests", () => {
   it("should send email when creating a customer", () => {
